@@ -2,10 +2,10 @@ import swaggerAutogen from 'swagger-autogen';
 
 const doc = {
   info: {
-    title: 'My API',
-    description: 'Description',
+    title: 'Bersih.in API Documentation',
+    description: 'This is the API documentation for Bersih.in',
   },
-  host: 'localhost:3000',
+  host: '0.0.0.0:80',
 };
 
 const outputFile = './swagger.json';
