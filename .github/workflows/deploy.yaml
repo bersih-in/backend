@@ -1,0 +1,30 @@
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  
+jobs:
+  run_pull:
+    name: deployment
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: deploy
+      env:
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY  }}
+          HOSTNAME : ${{ secrets.SSH_HOST  }}
+          USER_NAME : ${{ secrets.SSH_USER  }}
+      run: |
+        echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+        ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} -p 1026 '
+          cd ${{ secrets.WORK_DIR }} &&
+          git checkout ${{ secrets.MAIN_BRANCH }} &&
+          git pull origin ${{ secrets.MAIN_BRANCH }} &&
+          npm install &&
+          npx prisma generate &&
+          pm2 restart &&
+          exit
+        '
+    - name: cleanup
+      run: rm -rf ~/.ssh
