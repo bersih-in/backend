@@ -17,7 +17,7 @@ jobs:
           USER_NAME : ${{ secrets.SSH_USER  }}
       run: |
         echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-        ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} -p 1026 '
+        ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} -p 22 '
           cd ${{ secrets.WORK_DIR }} &&
           git checkout ${{ secrets.MAIN_BRANCH }} &&
           git pull origin ${{ secrets.MAIN_BRANCH }} &&
