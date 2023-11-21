@@ -26,7 +26,7 @@ jobs:
           git pull origin ${{ secrets.MAIN_BRANCH }} &&
           npm ci &&
           npx prisma generate &&
-          npm run swagger ${{ secrets.HOST_IP }} &&
+          npm run swagger ${{ secrets.HOST_IP }} 443 &&
           pm2 restart all &&
           exit
         '

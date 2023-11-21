@@ -1,17 +1,22 @@
 import swaggerAutogen from 'swagger-autogen';
-import dotenv from 'dotenv';
 
-dotenv.config();
-
-const PORT = process.env.PORT || 3000;
+const PORT = process.argv[3] || 3000;
 const HOST = process.argv[2] || 'localhost';
+
+let url;
+if (PORT === '443' || PORT === '80') {
+  url = `${HOST}`;
+} else {
+  url = `${HOST}:${PORT}`;
+}
 
 const doc = {
   info: {
     title: 'Bersih.in API Documentation',
     description: 'This is the API documentation for Bersih.in',
   },
-  host: `${HOST}:${PORT}`,
+  host: url,
+  schemes: ['http', 'https'],
   securityDefinitions: {
     bearerAuth: {
       type: 'apiKey',
