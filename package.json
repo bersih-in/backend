@@ -2,12 +2,12 @@
   "name": "backend-bersihin",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js",
-    "start": "node index.js",
+    "dev": "nodemon src/app.js",
+    "start": "node src/app.js",
     "lint": "eslint ."
   },
   "repository": {
@@ -21,7 +21,11 @@
   },
   "homepage": "https://github.com/bersih-in/backend#readme",
   "dependencies": {
-    "express": "^4.18.2"
+    "@prisma/client": "^5.6.0",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
     "eslint": "^8.54.0",
@@ -30,6 +34,7 @@
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-n": "^16.3.1",
     "eslint-plugin-promise": "^6.1.1",
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "prisma": "^5.6.0"
   }
 }
