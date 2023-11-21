@@ -1,5 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import swaggerUi from 'swagger-ui-express';
+
+import readJSON from './util/read-json.js';
 import authRoutes from './routes/auth.routes.js';
 
 dotenv.config();
@@ -15,6 +18,9 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', authRoutes);
+
+const swaggerDocument = readJSON('../../swagger/swagger.json');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.listen(PORT, () => {
   console.log(`Server is listening on http://localhost:${PORT}`);
