@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
 app.use('/auth', authRoutes);
 
 const swaggerDocument = readJSON('../../swagger/swagger.json');
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, { swaggerOptions: { persistAuthorization: true } }));
 
 app.listen(PORT, () => {
   console.log(`Server is listening on http://localhost:${PORT}`);
