@@ -22,7 +22,7 @@ jobs:
           git reset --hard &&
           git checkout ${{ secrets.MAIN_BRANCH }} &&
           git pull origin ${{ secrets.MAIN_BRANCH }} &&
-          npm install &&
+          npm ci &&
           npx prisma generate &&
           npm run swagger ${{ secrets.HOST_IP }} &&
           pm2 restart all &&
