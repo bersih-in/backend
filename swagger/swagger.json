@@ -10,6 +10,14 @@
   "schemes": [
     "http"
   ],
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "authorization",
+      "description": "Please enter a valid token to test the protected endpoints. Don't forget to add the **Bearer** prefix."
+    }
+  },
   "paths": {
     "/": {
       "get": {
@@ -35,6 +43,9 @@
                   "example": "any"
                 },
                 "lastName": {
+                  "example": "any"
+                },
+                "role": {
                   "example": "any"
                 },
                 "email": {
@@ -88,6 +99,24 @@
             "description": "Internal Server Error"
           }
         }
+      }
+    },
+    "/auth/credential-info": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   }

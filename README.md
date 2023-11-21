@@ -1,11 +1,12 @@
 # Project Name
 
-A brief description of your project.
+Bersih.in Backend using Node JS.
 
 ## Table of Contents
 
 - [Installation](#installation)
 - [Usage](#usage)
+- [Utility](#utility)
 
 
 ## Installation
@@ -30,7 +31,13 @@ A brief description of your project.
 
    Update the `.env` file with your configuration.
 
-4. Start the application:
+4. Set up Prisma Client:
+
+   ```bash
+   npx prisma generate
+   ```
+
+5. Start the application:
 
    ```bash
    npm run dev
@@ -38,4 +45,15 @@ A brief description of your project.
 
 ## Usage
 
-TBA
+The endpoint list can be found at `/api-docs`.
+
+## Utility
+### Lint
+This function performs linting on the code to check for any potential errors or style violations.
+
+`npm run lint`
+
+### Update Swagger UI
+This function generates code-based API documentation.
+
+`npm run swagger`
