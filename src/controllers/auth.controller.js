@@ -7,7 +7,7 @@ const saltRounds = 10;
 
 export const register = async (req, res) => {
   const {
-    firstName, lastName, email, password,
+    firstName, lastName, role, email, password,
   } = req.body;
 
   try {
@@ -16,6 +16,7 @@ export const register = async (req, res) => {
       data: {
         firstName,
         lastName,
+        role,
         email,
         password: hashedPassword,
       },
