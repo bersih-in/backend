@@ -4,10 +4,17 @@ const PORT = process.argv[3] || 3000;
 const HOST = process.argv[2] || 'localhost';
 
 let url;
+let schemes;
 if (PORT === '443' || PORT === '80') {
   url = `${HOST}`;
 } else {
   url = `${HOST}:${PORT}`;
+}
+
+if (PORT === '443') {
+  schemes = ['https'];
+} else {
+  schemes = ['http'];
 }
 
 const doc = {
@@ -16,7 +23,7 @@ const doc = {
     description: 'This is the API documentation for Bersih.in',
   },
   host: url,
-  schemes: ['http', 'https'],
+  schemes,
   securityDefinitions: {
     bearerAuth: {
       type: 'apiKey',
