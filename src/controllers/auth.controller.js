@@ -11,6 +11,19 @@ export const register = async (req, res) => {
   } = req.body;
 
   try {
+    // Check if email already exists
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+    if (user) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email already exists',
+      });
+    }
+
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     await prisma.user.create({
       data: {
@@ -22,12 +35,12 @@ export const register = async (req, res) => {
       },
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: 'user created',
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -68,6 +81,10 @@ export const login = async (req, res) => {
       success: true,
       data: {
         token,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        email: user.email,
       },
     });
   } catch (error) {
