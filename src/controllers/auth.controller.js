@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import prisma from '../config/db.js';
+import User from '../models/user.model.js';
 
 const saltRounds = 10;
 
@@ -12,11 +12,7 @@ export const register = async (req, res) => {
 
   try {
     // Check if email already exists
-    const user = await prisma.user.findFirst({
-      where: {
-        email,
-      },
-    });
+    const user = await User.findOne({ where: { email } });
     if (user) {
       return res.status(400).json({
         success: false,
@@ -25,14 +21,12 @@ export const register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    await prisma.user.create({
-      data: {
-        firstName,
-        lastName,
-        role,
-        email,
-        password: hashedPassword,
-      },
+    await User.create({
+      firstName,
+      lastName,
+      role,
+      email,
+      password: hashedPassword,
     });
 
     return res.status(200).json({
@@ -51,11 +45,7 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await prisma.user.findFirst({
-      where: {
-        email,
-      },
-    });
+    const user = await User.findOne({ where: { email } });
 
     if (!user) {
       return res.status(400).json({
@@ -73,7 +63,7 @@ export const login = async (req, res) => {
       });
     }
 
-    const token = await jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
+    const token = await jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
 
@@ -100,17 +90,8 @@ export const credentialInfo = async (req, res) => {
             "bearerAuth": []
     }] */
   try {
-    const user = await prisma.user.findFirst({
-      where: {
-        email: req.user.email,
-      },
-      select: {
-        firstName: true,
-        lastName: true,
-        role: true,
-        email: true,
-      },
-    });
+    const attributes = ['firstName', 'lastName', 'role', 'email'];
+    const user = await User.findOne({ where: { id: req.user.id }, attributes });
 
     return res.status(200).json({
       success: true,
