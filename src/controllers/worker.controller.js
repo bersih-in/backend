@@ -14,7 +14,7 @@ export const getReports = async (req, res) => {
               lon: "106.123456",
               distanceLimit: 10,
             },
-            description: `Get all reports by worker. If sortByDate is true, then sort by date.
+            description: `Get all pending reports by worker. sortByDate can be true/false.
             If sortByDate is false, then sort by distance. Distance is optional (Default: 10[km]).`
     }
   */
@@ -23,6 +23,14 @@ export const getReports = async (req, res) => {
       success: false,
       message: 'Forbidden',
     });
+  }
+
+  if (req.body.sortByDate === undefined) {
+    return res.status(400).json({ success: false, message: 'sortByDate is required' });
+  }
+
+  if (req.body.lat === undefined || req.body.lon === undefined) {
+    return res.status(400).json({ success: false, message: 'lat and lon is required' });
   }
 
   const {
@@ -34,7 +42,7 @@ export const getReports = async (req, res) => {
     distanceLimit = 10;
   }
 
-  const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason',
+  const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason', 'createdAt', 'updatedAt',
     [
       Sequelize.fn(
         'ST_Distance',
@@ -46,42 +54,27 @@ export const getReports = async (req, res) => {
   ];
 
   try {
-    if (sortByDate) {
-      const submissions = await Submission.findAll({
-        attributes,
-        order: [['createdAt', 'DESC']],
-        where: {
-          status: 'PENDING',
-          [Op.and]: [
-            Sequelize.fn(
-              'ST_DWithin',
-              Sequelize.cast(Sequelize.col('coords'), 'geography'),
-              Sequelize.cast(Sequelize.fn('ST_SetSRID', Sequelize.fn('ST_MakePoint', lon, lat), 4326), 'geography'),
-              distanceLimit * 1000,
-            ),
-          ],
-        },
-      });
-
-      return res.status(200).json({
-        success: true,
-        data: submissions,
-      });
+    let order = [['createdAt', 'DESC']];
+    if (!sortByDate && distanceLimit > 0) {
+      order = [
+        Sequelize.fn('ST_Distance', Sequelize.col('coords'), Sequelize.fn('ST_SetSRID', Sequelize.fn('ST_MakePoint', lon, lat), 4326)),
+      ];
     }
 
     // sort by distance
     const submissions = await Submission.findAll({
       attributes,
-      order: [
-        Sequelize.fn('ST_Distance', Sequelize.col('coords'), Sequelize.fn('ST_MakePoint', lon, lat)),
-      ],
+      order,
       where: {
         status: 'PENDING',
-        coords: {
-          [Op.and]: [
-            Sequelize.fn('ST_DWithin', Sequelize.col('coords'), Sequelize.fn('ST_MakePoint', lon, lat), distanceLimit * 1000),
-          ],
-        },
+        [Op.and]: [
+          Sequelize.fn(
+            'ST_DWithin',
+            Sequelize.cast(Sequelize.col('coords'), 'geography'),
+            Sequelize.cast(Sequelize.fn('ST_SetSRID', Sequelize.fn('ST_MakePoint', lon, lat), 4326), 'geography'),
+            distanceLimit * 1000,
+          ),
+        ],
       },
     });
 
@@ -90,7 +83,6 @@ export const getReports = async (req, res) => {
       data: submissions,
     });
   } catch (error) {
-    console.log(error.message);
     return res.status(500).json({
       success: false,
       message: 'Internal Server Error',
@@ -170,7 +162,6 @@ export const changeReportState = async (req, res) => {
       message: 'Report state changed',
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       success: false,
       message: 'Internal Server Error',
@@ -178,4 +169,39 @@ export const changeReportState = async (req, res) => {
   }
 };
 
-export default getReports;
+export const getHistory = async (req, res) => {
+  /* #swagger.security = [{
+            "bearerAuth": []
+    }]
+  */
+  if (req.user.role !== 'WORKER') {
+    return res.status(403).json({
+      success: false,
+      message: 'Forbidden',
+    });
+  }
+
+  const workerId = req.user.id;
+
+  const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason', 'createdAt', 'updatedAt'];
+
+  try {
+    const submissions = await Submission.findAll({
+      attributes,
+      order: [['createdAt', 'DESC']],
+      where: {
+        workedBy: workerId,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: submissions,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+};
