@@ -21,7 +21,14 @@ export const submit = async (req, res) => {
   } = req.body;
 
   try {
-    const userId = req.user.id;
+    const { id: userId, role } = req.user;
+
+    if (role !== 'USER') {
+      return res.status(403).json({
+        success: false,
+        message: 'Forbidden',
+      });
+    }
 
     if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
       return res.status(400).json({
@@ -37,7 +44,7 @@ export const submit = async (req, res) => {
       title,
       imageUrl,
       description,
-      coords: { type: 'Point', coordinates: [lon, lat] },
+      coords: { type: 'Point', coordinates: [lon, lat], crs: { type: 'name', properties: { name: 'EPSG:4326' } } },
     });
 
     return res.status(200).json({
@@ -80,6 +87,13 @@ export const getSubmissionsBySelf = async (req, res) => {
     }] */
   const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason'];
   try {
+    if (req.user.role !== 'USER') {
+      return res.status(403).json({
+        success: false,
+        message: 'Forbidden',
+      });
+    }
+
     const userId = req.user.id;
 
     const submissions = await Submission.findAll({
