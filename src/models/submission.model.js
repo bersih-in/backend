@@ -15,10 +15,10 @@ const Submission = sequelize.define('Submission', {
     type: DataTypes.GEOMETRY('POINT', 4326),
   },
   lat: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.DECIMAL,
   },
   lon: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.DECIMAL,
   },
   title: {
     type: DataTypes.STRING,
@@ -37,9 +37,17 @@ const Submission = sequelize.define('Submission', {
     type: DataTypes.STRING,
     defaultValue: '',
   },
-  finishedBy: {
+  workedBy: {
     type: DataTypes.INTEGER,
   },
+}, {
+  indexes: [
+    {
+      name: 'spatial_index',
+      type: 'SPATIAL',
+      fields: ['coords'],
+    },
+  ],
 });
 
 export default Submission;
