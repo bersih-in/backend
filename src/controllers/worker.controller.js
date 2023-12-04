@@ -259,9 +259,7 @@ export const getReportById = async (req, res) => {
     });
   }
 
-  const workerId = req.user.id;
-
-  const { reportId } = req.params;
+  const { id } = req.params;
 
   const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason', 'createdAt', 'updatedAt'];
 
@@ -269,8 +267,7 @@ export const getReportById = async (req, res) => {
     const submission = await Submission.findOne({
       attributes,
       where: {
-        id: reportId,
-        workedBy: workerId,
+        id,
       },
     });
 
@@ -286,6 +283,7 @@ export const getReportById = async (req, res) => {
       data: submission,
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       success: false,
       message: 'Internal Server Error',
