@@ -84,7 +84,9 @@ export const getSubmissionsByUserId = async (req, res) => {
 export const getSubmissionsBySelf = async (req, res) => {
   /* #swagger.security = [{
             "bearerAuth": []
-    }] */
+    }]
+     #swagger.description = 'Get all submissions by current logged in user'
+  */
   const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason'];
   try {
     if (req.user.role !== 'USER') {
