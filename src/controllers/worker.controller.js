@@ -173,6 +173,7 @@ export const getHistory = async (req, res) => {
   /* #swagger.security = [{
             "bearerAuth": []
     }]
+    #swagger.description = 'Get reports done by current worker'
   */
   if (req.user.role !== 'WORKER') {
     return res.status(403).json({
@@ -197,6 +198,92 @@ export const getHistory = async (req, res) => {
     return res.status(200).json({
       success: true,
       data: submissions,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+};
+
+export const getInProgressReports = async (req, res) => {
+  /* #swagger.security = [{
+            "bearerAuth": []
+    }]
+    #swagger.description = 'Get reports IN_PROGRESS by current worker'
+  */
+  if (req.user.role !== 'WORKER') {
+    return res.status(403).json({
+      success: false,
+      message: 'Forbidden',
+    });
+  }
+
+  const workerId = req.user.id;
+
+  const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason', 'createdAt', 'updatedAt'];
+
+  try {
+    const submissions = await Submission.findAll({
+      attributes,
+      order: [['updatedAt', 'DESC']],
+      where: {
+        workedBy: workerId,
+        status: 'IN_PROGRESS',
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: submissions,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+};
+
+export const getReportById = async (req, res) => {
+  /* #swagger.security = [{
+            "bearerAuth": []
+    }]
+    #swagger.description = 'Get report by id'
+  */
+  if (req.user.role !== 'WORKER') {
+    return res.status(403).json({
+      success: false,
+      message: 'Forbidden',
+    });
+  }
+
+  const workerId = req.user.id;
+
+  const { reportId } = req.params;
+
+  const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason', 'createdAt', 'updatedAt'];
+
+  try {
+    const submission = await Submission.findOne({
+      attributes,
+      where: {
+        id: reportId,
+        workedBy: workerId,
+      },
+    });
+
+    if (!submission) {
+      return res.status(404).json({
+        success: false,
+        message: 'Report not found',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: submission,
     });
   } catch (error) {
     return res.status(500).json({
