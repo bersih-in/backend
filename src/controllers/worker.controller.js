@@ -103,7 +103,7 @@ export const changeReportState = async (req, res) => {
               statusReason: "Report is being processed"
             },
             description: `Change state report by worker.
-            Valid status: IN_PROGRESS, FINISHED, REJECTED_BY_WORKER`
+            Valid status: VERIFIED, IN_PROGRESS, FINISHED, REJECTED_BY_WORKER`
     }
   */
   if (req.user.role !== 'WORKER') {
@@ -116,12 +116,12 @@ export const changeReportState = async (req, res) => {
 
   const { reportId, status, statusReason } = req.body;
 
-  const validStatus = ['IN_PROGRESS', 'FINISHED', 'REJECTED_BY_WORKER'];
+  const validStatus = ['VERIFIED', 'IN_PROGRESS', 'FINISHED', 'REJECTED_BY_WORKER'];
 
   if (!validStatus.includes(status)) {
     return res.status(400).json({
       success: false,
-      message: 'Invalid status. Valid status: IN_PROGRESS, FINISHED, REJECTED_BY_WORKER',
+      message: 'Invalid status. Valid status: VERIFIED, IN_PROGRESS, FINISHED, REJECTED_BY_WORKER',
     });
   }
 

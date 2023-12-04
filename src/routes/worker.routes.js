@@ -8,7 +8,7 @@ import {
 const router = express.Router();
 
 router.post('/reports', authenticateUser, getReports);
-router.post('/report-update', authenticateUser, changeReportState);
+router.put('/report-update', authenticateUser, changeReportState);
 router.get('/history', authenticateUser, getHistory);
 router.get('/in-progress', authenticateUser, getInProgressReports);
 router.get('/report/:id', authenticateUser, getReportById);
