@@ -2,7 +2,7 @@ import express from 'express';
 
 import authenticateUser from '../middlewares/auth.middleware.js';
 import {
-  getReports, changeReportState, getHistory, getReportById, getInProgressReports
+  getReports, changeReportState, getHistory, getReportById, getInProgressReports,
 } from '../controllers/worker.controller.js';
 
 const router = express.Router();
