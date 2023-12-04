@@ -19,16 +19,18 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Bersih.in Backend');
-});
-
 app.use('/auth', authRoutes);
 app.use('/submission', submissionRoutes);
 app.use('/worker', workerRoutes);
 
 const swaggerDocument = readJSON('../../swagger/swagger.json');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, { swaggerOptions: { persistAuthorization: true } }));
+
+app.get('/', (req, res) => {
+  // #swagger.ignore = true
+  // redirect to swagger docs
+  res.redirect('/api-docs');
+});
 
 app.listen(PORT, () => {
   console.log(`Server is listening on http://localhost:${PORT}`);
