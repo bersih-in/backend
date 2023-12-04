@@ -1,0 +1,22 @@
+version: "1"
+services:
+  directus:
+    image: directus/directus:10.8.2
+    ports:
+      - 8055:8055
+    volumes:
+      - ./database:/directus/database
+      - ./uploads:/directus/uploads
+      - ./extensions:/directus/extensions
+    environment:
+      KEY: "aksjdflasjdoifwenrmznxcvskdzetasldkfjoqielanwsdflsdhlfasjf"
+      SECRET: "asjhdfkqfpunyasdfjalskdjfalskdfslkdfsgwekajdaisdlaksdalskd"
+      ADMIN_EMAIL: "admin@admin.com"
+      ADMIN_PASSWORD: "password123"
+      DB_CLIENT: ${DB_CLIENT}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      WEBSOCKETS_ENABLED: true
