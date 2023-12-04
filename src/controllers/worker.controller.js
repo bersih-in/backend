@@ -13,9 +13,13 @@ export const getReports = async (req, res) => {
               lat: "-6.123456",
               lon: "106.123456",
               distanceLimit: 10,
+              status: "PENDING",
+              bySelf: false
             },
             description: `Get all pending reports by worker. sortByDate can be true/false.
-            If sortByDate is false, then sort by distance. Distance is optional (Default: 10[km]).`
+            If sortByDate is false, then sort by distance. Distance is optional (Default: 10[km]).
+            Status is optional (Default: PENDING).
+            Valid status: PENDING, VERIFIED, IN_PROGRESS, FINISHED, REJECTED_BY_WORKER.`
     }
   */
   if (req.user.role !== 'WORKER') {
@@ -34,12 +38,20 @@ export const getReports = async (req, res) => {
   }
 
   const {
-    sortByDate, lat, lon,
+    sortByDate, lat, lon, bySelf,
   } = req.body;
-  let { distanceLimit } = req.body;
+  const workerId = req.user.id;
+  let { distanceLimit, status } = req.body;
 
-  if (distanceLimit === undefined) {
-    distanceLimit = 10;
+  if (distanceLimit === undefined) distanceLimit = 10;
+  if (status === undefined) status = 'PENDING';
+
+  const validStatus = ['PENDING', 'VERIFIED', 'IN_PROGRESS', 'FINISHED', 'REJECTED_BY_WORKER'];
+  if (!validStatus.includes(status)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid status. Valid status: PENDING, VERIFIED, IN_PROGRESS, FINISHED, REJECTED_BY_WORKER',
+    });
   }
 
   const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason', 'createdAt', 'updatedAt',
@@ -66,7 +78,7 @@ export const getReports = async (req, res) => {
       attributes,
       order,
       where: {
-        status: 'PENDING',
+        status,
         [Op.and]: [
           Sequelize.fn(
             'ST_DWithin',
@@ -75,6 +87,7 @@ export const getReports = async (req, res) => {
             distanceLimit * 1000,
           ),
         ],
+        ...(bySelf && { workedBy: workerId }),
       },
     });
 
@@ -159,7 +172,7 @@ export const changeReportState = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Report state changed',
+      data: 'Report state changed',
     });
   } catch (error) {
     return res.status(500).json({
