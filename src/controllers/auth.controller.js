@@ -70,7 +70,7 @@ export const login = async (req, res) => {
     };
 
     const token = await jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: '1h',
+      expiresIn: '24h',
     });
 
     return res.status(200).json({
