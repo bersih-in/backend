@@ -77,6 +77,7 @@ export const login = async (req, res) => {
       success: true,
       data: {
         token,
+        id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
@@ -96,7 +97,7 @@ export const credentialInfo = async (req, res) => {
             "bearerAuth": []
     }] */
   try {
-    const attributes = ['firstName', 'lastName', 'role', 'email'];
+    const attributes = ['id', 'firstName', 'lastName', 'role', 'email'];
     const user = await User.findOne({ where: { id: req.user.id }, attributes });
 
     return res.status(200).json({
