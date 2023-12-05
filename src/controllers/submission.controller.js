@@ -147,4 +147,4 @@ export const getSubmissionById = async (req, res) => {
       message: 'Internal Server Error',
     });
   }
-}
+};

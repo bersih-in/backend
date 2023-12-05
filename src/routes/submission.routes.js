@@ -1,7 +1,9 @@
 import express from 'express';
 
 import authenticateUser from '../middlewares/auth.middleware.js';
-import { submit, getSubmissionsByUserId, getSubmissionsBySelf, getSubmissionById } from '../controllers/submission.controller.js';
+import {
+  submit, getSubmissionsByUserId, getSubmissionsBySelf, getSubmissionById,
+} from '../controllers/submission.controller.js';
 
 const router = express.Router();
 
