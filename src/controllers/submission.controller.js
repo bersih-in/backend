@@ -114,3 +114,37 @@ export const getSubmissionsBySelf = async (req, res) => {
     });
   }
 };
+
+export const getSubmissionById = async (req, res) => {
+  /* #swagger.security = [{
+            "bearerAuth": []
+    }]
+     #swagger.description = 'Get submission by id'
+  */
+  const { id } = req.params;
+
+  const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason'];
+  try {
+    const submission = await Submission.findOne({
+      where: { id },
+      attributes,
+    });
+
+    if (!submission) {
+      return res.status(404).json({
+        success: false,
+        message: 'Submission not found',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: submission,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
+}
