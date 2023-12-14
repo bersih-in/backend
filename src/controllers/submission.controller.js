@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import Submission from '../models/submission.model.js';
 
 export const submit = async (req, res) => {
@@ -44,7 +46,17 @@ export const submit = async (req, res) => {
       title,
       imageUrl,
       description,
-      coords: { type: 'Point', coordinates: [lon, lat], crs: { type: 'name', properties: { name: 'EPSG:4326' } } },
+      coords: {
+        type: 'Point',
+        coordinates: [lon, lat],
+        crs: { type: 'name', properties: { name: 'EPSG:4326' } },
+      },
+    });
+
+    // send to ML with axios
+    await axios.put(process.env.ML_ENDPOINT, {
+      submissionId: submission.id,
+      imageUrl,
     });
 
     return res.status(200).json({
@@ -62,7 +74,16 @@ export const submit = async (req, res) => {
 export const getSubmissionsByUserId = async (req, res) => {
   const { userId } = req.params;
 
-  const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason'];
+  const attributes = [
+    'id',
+    'title',
+    'description',
+    'imageUrl',
+    'lat',
+    'lon',
+    'status',
+    'statusReason',
+  ];
   try {
     const submissions = await Submission.findAll({
       where: { userId },
@@ -87,7 +108,16 @@ export const getSubmissionsBySelf = async (req, res) => {
     }]
      #swagger.description = 'Get all submissions by current logged in user'
   */
-  const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason'];
+  const attributes = [
+    'id',
+    'title',
+    'description',
+    'imageUrl',
+    'lat',
+    'lon',
+    'status',
+    'statusReason',
+  ];
   try {
     if (req.user.role !== 'USER') {
       return res.status(403).json({
@@ -123,7 +153,16 @@ export const getSubmissionById = async (req, res) => {
   */
   const { id } = req.params;
 
-  const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason'];
+  const attributes = [
+    'id',
+    'title',
+    'description',
+    'imageUrl',
+    'lat',
+    'lon',
+    'status',
+    'statusReason',
+  ];
   try {
     const submission = await Submission.findOne({
       where: { id },
