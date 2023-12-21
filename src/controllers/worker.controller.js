@@ -205,6 +205,9 @@ export const getHistory = async (req, res) => {
       order: [['createdAt', 'DESC']],
       where: {
         workedBy: workerId,
+        status: {
+          [Op.not]: 'IN_PROGRESS',
+        },
       },
     });
 
