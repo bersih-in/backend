@@ -40,6 +40,15 @@ const Submission = sequelize.define('Submission', {
   workedBy: {
     type: DataTypes.INTEGER,
   },
+  probability: {
+    type: DataTypes.FLOAT,
+  },
+  urgent: {
+    type: DataTypes.BOOLEAN,
+  },
+  urgencyProbability: {
+    type: DataTypes.FLOAT,
+  },
 }, {
   indexes: [
     {

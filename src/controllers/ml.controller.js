@@ -7,11 +7,16 @@ export const changeStatus = async (req, res) => {
             required: true,
             schema: {
               submissionId: 0,
-              status: "VERIFIED"
+              status: "VERIFIED",
+              probability: 0.542,
+              urgent: true,
+              urgencyProbability: 0.9
             }
     }
     */
-  const { submissionId, status } = req.body;
+  const {
+    submissionId, status, probability, urgent, urgencyProbability,
+  } = req.body;
 
   const validStatus = ['REJECTED_BY_ML', 'VERIFIED'];
   if (!validStatus.includes(status)) {
@@ -34,7 +39,9 @@ export const changeStatus = async (req, res) => {
       });
     }
 
-    await Submission.update({ status }, { where: { id: submissionId } });
+    await Submission.update({
+      status, probability, urgent, urgencyProbability,
+    }, { where: { id: submissionId } });
 
     return res.status(200).json({
       success: true,
