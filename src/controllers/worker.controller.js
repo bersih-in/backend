@@ -54,7 +54,7 @@ export const getReports = async (req, res) => {
     });
   }
 
-  const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason', 'createdAt', 'updatedAt',
+  const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason', 'createdAt', 'updatedAt', 'urgent',
     [
       Sequelize.fn(
         'ST_Distance',
@@ -197,7 +197,7 @@ export const getHistory = async (req, res) => {
 
   const workerId = req.user.id;
 
-  const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason', 'createdAt', 'updatedAt'];
+  const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason', 'createdAt', 'updatedAt', 'urgent'];
 
   try {
     const submissions = await Submission.findAll({
@@ -235,7 +235,7 @@ export const getInProgressReports = async (req, res) => {
 
   const workerId = req.user.id;
 
-  const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason', 'createdAt', 'updatedAt'];
+  const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason', 'createdAt', 'updatedAt', 'urgent'];
 
   try {
     const submissions = await Submission.findAll({
@@ -274,7 +274,7 @@ export const getReportById = async (req, res) => {
 
   const { id } = req.params;
 
-  const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason', 'createdAt', 'updatedAt'];
+  const attributes = ['id', 'title', 'description', 'imageUrl', 'lat', 'lon', 'status', 'statusReason', 'createdAt', 'updatedAt', 'urgent'];
 
   try {
     const submission = await Submission.findOne({

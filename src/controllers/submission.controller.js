@@ -117,6 +117,7 @@ export const getSubmissionsBySelf = async (req, res) => {
     'lon',
     'status',
     'statusReason',
+    'urgent',
   ];
   try {
     if (req.user.role !== 'USER') {
@@ -162,6 +163,7 @@ export const getSubmissionById = async (req, res) => {
     'lon',
     'status',
     'statusReason',
+    'urgent',
   ];
   try {
     const submission = await Submission.findOne({
